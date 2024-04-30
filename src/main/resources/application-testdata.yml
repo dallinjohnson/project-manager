@@ -10,5 +10,5 @@ spring:
     show-sql: true
   sql:
     init:
-      mode: never
+      mode: always
       schema-locations: classpath:data.sql
