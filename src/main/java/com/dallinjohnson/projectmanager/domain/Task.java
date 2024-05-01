@@ -1,5 +1,6 @@
 package com.dallinjohnson.projectmanager.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -29,8 +30,9 @@ public class Task {
     )
     private List<User> assignedUsers;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "project_id")
+    @JsonIgnore
     private Project project;
 
     public Long getId() {

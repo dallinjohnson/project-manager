@@ -61,6 +61,7 @@ public class ProjectController {
 
     @PostMapping("/{projectId}/tasks")
     public ResponseEntity<Task> addTaskToProject(@PathVariable Long projectId, @RequestBody Task task) {
+        task = taskService.create(task);
         return ResponseEntity.status(HttpStatus.CREATED).body(projectService.addTaskToProject(projectId, task));
     }
 
