@@ -50,6 +50,10 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+    public void deleteById(Long projectId) {
+        projectRepository.deleteById(projectId);
+    }
+
     public Task addTaskToProject(Long projectId, Task task) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + projectId));

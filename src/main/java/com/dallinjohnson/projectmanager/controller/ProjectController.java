@@ -26,7 +26,7 @@ public class ProjectController {
 
     // TODO: add or remove assigned users with path /projects/{projectId}/tasks/{taskId}
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<Project>> getAllProjectsOrByIsComplete(@RequestParam(name = "isComplete", required = false) Boolean isComplete) {
         List<Project> projects;
         if (isComplete != null) {
@@ -57,6 +57,12 @@ public class ProjectController {
     @PutMapping("/{projectId}")
     public ResponseEntity<Project> updateProject(@PathVariable Long projectId, @RequestBody Project project) {
         return ResponseEntity.ok(projectService.update(project));
+    }
+
+    @DeleteMapping("/{projectId}")
+    public ResponseEntity<Void> deleteProject(@PathVariable Long projectId) {
+        projectService.deleteById(projectId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{projectId}/tasks")
