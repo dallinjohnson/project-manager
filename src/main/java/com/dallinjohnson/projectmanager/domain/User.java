@@ -1,5 +1,6 @@
 package com.dallinjohnson.projectmanager.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class User {
     private String name;
 
     @ManyToMany(mappedBy = "assignedUsers")
+    @JsonIgnore
     private List<Task> assignedTasks;
 
     public Long getId() {

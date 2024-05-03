@@ -15,12 +15,10 @@ import java.util.Optional;
 public class ProjectService {
 
     private ProjectRepository projectRepository;
-    private TaskService taskService;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, TaskService taskService) {
+    public ProjectService(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
-        this.taskService = taskService;
     }
 
     public Optional<Project> findById(Long projectId) {

@@ -12,8 +12,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByName(String name);
-
     @Query("SELECT u FROM User u JOIN u.assignedTasks t WHERE t.id = :taskId")
     List<User> findUsersByTaskId(@Param("taskId") Long taskId);
 }

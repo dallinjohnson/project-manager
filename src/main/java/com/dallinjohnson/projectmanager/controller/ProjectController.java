@@ -2,10 +2,13 @@ package com.dallinjohnson.projectmanager.controller;
 
 import com.dallinjohnson.projectmanager.domain.Project;
 import com.dallinjohnson.projectmanager.domain.Task;
+import com.dallinjohnson.projectmanager.domain.User;
 import com.dallinjohnson.projectmanager.service.ProjectService;
 import com.dallinjohnson.projectmanager.service.TaskService;
+import com.dallinjohnson.projectmanager.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +19,16 @@ import java.util.List;
 @RequestMapping("/api/projects")
 public class ProjectController {
 
-    private ProjectService projectService;
-    private TaskService taskService;
+    private final ProjectService projectService;
+    private final TaskService taskService;
+    private final UserService userService;
 
-    public ProjectController(ProjectService projectService, TaskService taskService) {
+    @Autowired
+    public ProjectController(ProjectService projectService, TaskService taskService, UserService userService) {
         this.projectService = projectService;
         this.taskService = taskService;
+        this.userService = userService;
     }
-
-    // TODO: add or remove assigned users with path /projects/{projectId}/tasks/{taskId}
 
     @GetMapping
     public ResponseEntity<List<Project>> getAllProjectsOrByIsComplete(@RequestParam(name = "isComplete", required = false) Boolean isComplete) {
