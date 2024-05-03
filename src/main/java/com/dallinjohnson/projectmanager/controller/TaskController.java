@@ -6,8 +6,6 @@ import com.dallinjohnson.projectmanager.service.TaskService;
 import com.dallinjohnson.projectmanager.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +22,11 @@ public class TaskController {
     public TaskController(TaskService taskService, UserService userService) {
         this.taskService = taskService;
         this.userService = userService;
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<Task>> getTasksByAssignedUserId(@RequestParam Long userId) {
+        return ResponseEntity.ok(taskService.getTasksByAssignedUserId(userId));
     }
 
     @PutMapping("/{taskId}/users/{userId}")

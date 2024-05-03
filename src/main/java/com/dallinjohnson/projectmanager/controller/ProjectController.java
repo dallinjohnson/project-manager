@@ -2,10 +2,8 @@ package com.dallinjohnson.projectmanager.controller;
 
 import com.dallinjohnson.projectmanager.domain.Project;
 import com.dallinjohnson.projectmanager.domain.Task;
-import com.dallinjohnson.projectmanager.domain.User;
 import com.dallinjohnson.projectmanager.service.ProjectService;
 import com.dallinjohnson.projectmanager.service.TaskService;
-import com.dallinjohnson.projectmanager.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +19,29 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final TaskService taskService;
-    private final UserService userService;
 
     @Autowired
-    public ProjectController(ProjectService projectService, TaskService taskService, UserService userService) {
+    public ProjectController(ProjectService projectService, TaskService taskService) {
         this.projectService = projectService;
         this.taskService = taskService;
-        this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/")
+    public ResponseEntity<List<Project>> getAllProjects() {
+        return ResponseEntity.ok(projectService.findAll());
+    }
+
+    @GetMapping("/completed/")
+    public ResponseEntity<List<Project>> getCompletedProjects() {
+        return ResponseEntity.ok(projectService.getProjectsByIsComplete(true));
+    }
+
+    @GetMapping("/in-progress/")
+    public ResponseEntity<List<Project>> getInProgressProjects() {
+        return ResponseEntity.ok(projectService.getProjectsByIsComplete(false));
+    }
+
+    @GetMapping("/")
     public ResponseEntity<List<Project>> getAllProjectsOrByIsComplete(@RequestParam(name = "isComplete", required = false) Boolean isComplete) {
         List<Project> projects;
         if (isComplete != null) {
@@ -48,12 +59,12 @@ public class ProjectController {
         return ResponseEntity.ok(project);
     }
 
-    @GetMapping("/{projectId}/tasks")
+    @GetMapping("/{projectId}/tasks/")
     public ResponseEntity<List<Task>> getTasksForProject(@PathVariable Long projectId) {
         return ResponseEntity.ok(taskService.getTasksForProject(projectId));
     }
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<Project> createProject(@RequestBody Project project) {
         return ResponseEntity.status(HttpStatus.CREATED).body(projectService.create(project));
     }
@@ -69,7 +80,7 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{projectId}/tasks")
+    @PostMapping("/{projectId}/tasks/")
     public ResponseEntity<Task> addTaskToProject(@PathVariable Long projectId, @RequestBody Task task) {
         task = taskService.create(task);
         return ResponseEntity.status(HttpStatus.CREATED).body(projectService.addTaskToProject(projectId, task));

@@ -2,6 +2,7 @@ package com.dallinjohnson.projectmanager.controller;
 
 import com.dallinjohnson.projectmanager.domain.User;
 import com.dallinjohnson.projectmanager.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +21,19 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.findAll());
     }
 
-    @PostMapping
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
+        User user = userService.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
     }
