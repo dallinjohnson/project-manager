@@ -31,4 +31,12 @@ public class UserService {
     public User save(User user) {
         return userRepository.save(user);
     }
+
+    public User update(Long userId, User user) {
+        if (userRepository.existsById(userId)) {
+            return userRepository.save(user);
+        } else {
+            throw new EntityNotFoundException("User not found with id: " + userId);
+        }
+    }
 }

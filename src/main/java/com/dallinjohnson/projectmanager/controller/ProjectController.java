@@ -41,17 +41,6 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getProjectsByIsComplete(false));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<Project>> getAllProjectsOrByIsComplete(@RequestParam(name = "isComplete", required = false) Boolean isComplete) {
-        List<Project> projects;
-        if (isComplete != null) {
-            projects = projectService.getProjectsByIsComplete(isComplete);
-        } else {
-            projects = projectService.findAll();
-        }
-        return ResponseEntity.ok(projects);
-    }
-
     @GetMapping("/{projectId}")
     public ResponseEntity<Project> getProjectById(@PathVariable Long projectId) {
         Project project = projectService.findById(projectId)
