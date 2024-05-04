@@ -60,7 +60,7 @@ public class ProjectController {
 
     @PutMapping("/{projectId}")
     public ResponseEntity<Project> updateProject(@PathVariable Long projectId, @RequestBody Project project) {
-        return ResponseEntity.ok(projectService.update(project));
+        return ResponseEntity.ok(projectService.update(projectId, project));
     }
 
     @DeleteMapping("/{projectId}")

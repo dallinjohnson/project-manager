@@ -44,8 +44,16 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public Project update(Project project) {
-        return projectRepository.save(project);
+    public Project update(Long projectId, Project project) {
+        Project existingProject = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + projectId));
+
+        existingProject.setName(project.getName());
+        existingProject.setComplete(project.isComplete());
+        existingProject.setStartDate(project.getStartDate());
+        existingProject.setEndDate(project.getEndDate());
+
+        return projectRepository.save(existingProject);
     }
 
     public void deleteById(Long projectId) {
