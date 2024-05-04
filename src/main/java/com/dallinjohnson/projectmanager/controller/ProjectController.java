@@ -77,8 +77,12 @@ public class ProjectController {
 
     @PostMapping("/{projectId}/tasks/")
     public ResponseEntity<Task> addTaskToProject(@PathVariable Long projectId, @RequestBody Task task) {
-        task = taskService.create(task);
-        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.addTaskToProject(projectId, task));
+        Project project = projectService.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + projectId));
+        task.setProject(project);
+        project.getTasks().add(task);
+        Task savedTask = taskService.save(task);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedTask);
     }
 
     @DeleteMapping("/{projectId}/tasks/{taskId}")
