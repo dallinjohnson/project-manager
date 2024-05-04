@@ -69,6 +69,12 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{projectId}/tasks/{taskId}")
+    public ResponseEntity<Task> updateTask(@PathVariable Long taskId, @RequestBody Task task) {
+        Task updatedTask = taskService.update(taskId, task);
+        return ResponseEntity.ok(updatedTask);
+    }
+
     @PostMapping("/{projectId}/tasks/")
     public ResponseEntity<Task> addTaskToProject(@PathVariable Long projectId, @RequestBody Task task) {
         task = taskService.create(task);

@@ -26,13 +26,16 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public Task update(Task task) {
-        Long taskId = task.getId();
-        if (taskRepository.existsById(taskId)) {
-            return taskRepository.save(task);
-        } else {
-            throw new EntityNotFoundException("Task not found with ID: " + taskId);
-        }
+    public Task update(Long taskId, Task task) {
+        Task existingTask = taskRepository.findById(taskId)
+                .orElseThrow(() -> new EntityNotFoundException("Task not found with ID: " + taskId));
+
+        existingTask.setName(task.getName());
+        existingTask.setStartDate(task.getStartDate());
+        existingTask.setEndDate(task.getEndDate());
+        existingTask.setComplete(task.isComplete());
+
+        return taskRepository.save(existingTask);
     }
 
     public Optional<Task> findById(Long taskId) {
