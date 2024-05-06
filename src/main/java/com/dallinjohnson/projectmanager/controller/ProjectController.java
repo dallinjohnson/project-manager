@@ -92,4 +92,9 @@ public class ProjectController {
         taskService.deleteById(taskId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/by-user")
+    public ResponseEntity<List<Project>> getProjectsByAssignedUserId(@RequestParam Long userId) {
+        return ResponseEntity.ok(projectService.findProjectsByUserId(userId));
+    }
 }
