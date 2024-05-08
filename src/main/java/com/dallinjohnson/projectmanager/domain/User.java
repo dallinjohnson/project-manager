@@ -14,7 +14,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Name is required")
     private String name;
 
     @ManyToMany(mappedBy = "assignedUsers")

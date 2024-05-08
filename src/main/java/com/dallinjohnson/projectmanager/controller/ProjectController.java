@@ -86,14 +86,6 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTask);
     }
 
-    @DeleteMapping("/{projectId}/tasks/{taskId}")
-    @Transactional
-    public ResponseEntity<Void> removeTaskFromProject(@PathVariable Long projectId, @PathVariable Long taskId) {
-        projectService.removeTaskFromProject(projectId, taskId);
-        taskService.deleteById(taskId);
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping("/by-user")
     public ResponseEntity<List<Project>> getProjectsByAssignedUserId(@RequestParam Long userId) {
         return ResponseEntity.ok(projectService.findProjectsByUserId(userId));

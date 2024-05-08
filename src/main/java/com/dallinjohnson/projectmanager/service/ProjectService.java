@@ -59,13 +59,4 @@ public class ProjectService {
     public void deleteById(Long projectId) {
         projectRepository.deleteById(projectId);
     }
-
-    @Transactional
-    public void removeTaskFromProject(Long projectId, Long taskId) {
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + projectId));
-
-        List<Task> tasks = project.getTasks();
-        tasks.removeIf(task -> task.getId().equals(taskId));
-    }
 }

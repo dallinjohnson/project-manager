@@ -20,12 +20,6 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    // Get active tasks by user id
-
-    public Task create(Task task) {
-        return taskRepository.save(task);
-    }
-
     public Task update(Long taskId, Task task) {
         Task existingTask = taskRepository.findById(taskId)
                 .orElseThrow(() -> new EntityNotFoundException("Task not found with ID: " + taskId));
@@ -47,11 +41,10 @@ public class TaskService {
     }
 
     public void deleteById(Long taskId) {
-        if (taskRepository.existsById(taskId)) {
-            taskRepository.deleteById(taskId);
-        } else {
+        if (!taskRepository.existsById(taskId)) {
             throw new EntityNotFoundException("Task not found with ID: " + taskId);
         }
+        taskRepository.deleteById(taskId);
     }
 
     public List<Task> getTasksForProject(Long projectId) {
