@@ -71,13 +71,13 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}/tasks/{taskId}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long taskId, @RequestBody Task task) {
+    public ResponseEntity<Task> updateTask(@PathVariable Long taskId, @Valid @RequestBody Task task) {
         Task updatedTask = taskService.update(taskId, task);
         return ResponseEntity.ok(updatedTask);
     }
 
     @PostMapping("/{projectId}/tasks/")
-    public ResponseEntity<Task> addTaskToProject(@PathVariable Long projectId, @RequestBody Task task) {
+    public ResponseEntity<Task> addTaskToProject(@PathVariable Long projectId, @Valid @RequestBody Task task) {
         Project project = projectService.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + projectId));
         task.setProject(project);
