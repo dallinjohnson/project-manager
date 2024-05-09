@@ -5,8 +5,8 @@ import com.dallinjohnson.projectmanager.domain.Task;
 import com.dallinjohnson.projectmanager.service.ProjectService;
 import com.dallinjohnson.projectmanager.service.TaskService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,14 +43,14 @@ public class ProjectController {
     }
 
     @GetMapping("/{projectId}")
-    public ResponseEntity<Project> getProjectById(@PathVariable Long projectId) {
+    public ResponseEntity<Project> getProjectById(@PathVariable @Positive Long projectId) {
         Project project = projectService.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + projectId));
         return ResponseEntity.ok(project);
     }
 
     @GetMapping("/{projectId}/tasks/")
-    public ResponseEntity<List<Task>> getTasksForProject(@PathVariable Long projectId) {
+    public ResponseEntity<List<Task>> getTasksForProject(@PathVariable @Positive Long projectId) {
         return ResponseEntity.ok(taskService.getTasksForProject(projectId));
     }
 
@@ -60,24 +60,24 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}")
-    public ResponseEntity<Project> updateProject(@PathVariable Long projectId, @Valid @RequestBody Project project) {
+    public ResponseEntity<Project> updateProject(@PathVariable @Positive Long projectId, @Valid @RequestBody Project project) {
         return ResponseEntity.ok(projectService.update(projectId, project));
     }
 
     @DeleteMapping("/{projectId}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long projectId) {
+    public ResponseEntity<Void> deleteProject(@PathVariable @Positive Long projectId) {
         projectService.deleteById(projectId);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{projectId}/tasks/{taskId}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long taskId, @Valid @RequestBody Task task) {
+    public ResponseEntity<Task> updateTask(@PathVariable @Positive Long taskId, @Valid @RequestBody Task task) {
         Task updatedTask = taskService.update(taskId, task);
         return ResponseEntity.ok(updatedTask);
     }
 
     @PostMapping("/{projectId}/tasks/")
-    public ResponseEntity<Task> addTaskToProject(@PathVariable Long projectId, @Valid @RequestBody Task task) {
+    public ResponseEntity<Task> addTaskToProject(@PathVariable @Positive Long projectId, @Valid @RequestBody Task task) {
         Project project = projectService.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + projectId));
         task.setProject(project);
@@ -87,7 +87,7 @@ public class ProjectController {
     }
 
     @GetMapping("/by-user")
-    public ResponseEntity<List<Project>> getProjectsByAssignedUserId(@RequestParam Long userId) {
+    public ResponseEntity<List<Project>> getProjectsByAssignedUserId(@RequestParam @Positive Long userId) {
         return ResponseEntity.ok(projectService.findProjectsByUserId(userId));
     }
 }

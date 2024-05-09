@@ -5,6 +5,7 @@ import com.dallinjohnson.projectmanager.domain.User;
 import com.dallinjohnson.projectmanager.service.TaskService;
 import com.dallinjohnson.projectmanager.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +26,12 @@ public class TaskController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Task>> getTasksByAssignedUserId(@RequestParam Long userId) {
+    public ResponseEntity<List<Task>> getTasksByAssignedUserId(@RequestParam @Positive Long userId) {
         return ResponseEntity.ok(taskService.getTasksByAssignedUserId(userId));
     }
 
     @PutMapping("/{taskId}/users/{userId}")
-    public ResponseEntity<Task> assignUserToTask(@PathVariable Long taskId, @PathVariable Long userId) {
+    public ResponseEntity<Task> assignUserToTask(@PathVariable @Positive Long taskId, @PathVariable @Positive Long userId) {
         User user = userService.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
         Task task = taskService.findById(taskId)
@@ -46,7 +47,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
+    public ResponseEntity<Void> deleteTask(@PathVariable @Positive Long taskId) {
         taskService.deleteById(taskId);
         return ResponseEntity.noContent().build();
     }

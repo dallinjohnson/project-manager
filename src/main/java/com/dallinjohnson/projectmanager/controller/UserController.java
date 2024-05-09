@@ -4,6 +4,7 @@ import com.dallinjohnson.projectmanager.domain.User;
 import com.dallinjohnson.projectmanager.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
+    public ResponseEntity<User> getUserById(@PathVariable @Positive Long userId) {
         User user = userService.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
         return ResponseEntity.ok(user);
@@ -40,7 +41,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @Valid @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@PathVariable @Positive Long userId, @Valid @RequestBody User user) {
         user.setId(userId);
         User updatedUser = userService.update(userId, user);
         return ResponseEntity.ok(updatedUser);
