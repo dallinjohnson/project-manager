@@ -1,7 +1,5 @@
 package com.dallinjohnson.projectmanager.dto;
 
-import com.dallinjohnson.projectmanager.domain.User;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,7 +10,7 @@ public class TaskDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private boolean isComplete;
-    private List<User> assignedUsers;
+    private List<UserDTO> assignedUsers;
 
     public Long getId() {
         return id;
@@ -54,11 +52,11 @@ public class TaskDTO {
         isComplete = complete;
     }
 
-    public List<User> getAssignedUsers() {
+    public List<UserDTO> getAssignedUsers() {
         return assignedUsers;
     }
 
-    public void setAssignedUsers(List<User> assignedUsers) {
+    public void setAssignedUsers(List<UserDTO> assignedUsers) {
         this.assignedUsers = assignedUsers;
     }
 }
