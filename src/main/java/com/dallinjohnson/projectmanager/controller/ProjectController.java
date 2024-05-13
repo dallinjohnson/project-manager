@@ -2,6 +2,8 @@ package com.dallinjohnson.projectmanager.controller;
 
 import com.dallinjohnson.projectmanager.domain.Project;
 import com.dallinjohnson.projectmanager.domain.Task;
+import com.dallinjohnson.projectmanager.dto.ProjectDTO;
+import com.dallinjohnson.projectmanager.mapper.ProjectMapper;
 import com.dallinjohnson.projectmanager.service.ProjectService;
 import com.dallinjohnson.projectmanager.service.TaskService;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
