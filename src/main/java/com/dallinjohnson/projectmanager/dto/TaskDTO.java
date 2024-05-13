@@ -1,8 +1,11 @@
 package com.dallinjohnson.projectmanager.dto;
 
+import com.dallinjohnson.projectmanager.validation.ValidDateOrder;
+
 import java.time.LocalDate;
 import java.util.List;
 
+@ValidDateOrder(startDate = "startDate", endDate = "endDate")
 public class TaskDTO {
 
     private Long id;
