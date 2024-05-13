@@ -23,11 +23,13 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final TaskService taskService;
+    private final ProjectMapper projectMapper;
 
     @Autowired
-    public ProjectController(ProjectService projectService, TaskService taskService) {
+    public ProjectController(ProjectService projectService, TaskService taskService, ProjectMapper projectMapper) {
         this.projectService = projectService;
         this.taskService = taskService;
+        this.projectMapper = projectMapper;
     }
 
     @GetMapping("/")
@@ -58,8 +60,11 @@ public class ProjectController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Project> createProject(@Valid @RequestBody Project project) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.create(project));
+    public ResponseEntity<ProjectDTO> createProject(@Valid @RequestBody ProjectDTO projectDTO) {
+        Project project = projectMapper.mapToEntity(projectDTO);
+        Project savedProject = projectService.create(project);
+        ProjectDTO resultDTO = projectMapper.mapToDTO(savedProject);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resultDTO);
     }
 
     @PutMapping("/{projectId}")

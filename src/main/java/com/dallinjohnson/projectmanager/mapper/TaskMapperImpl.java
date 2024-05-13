@@ -5,6 +5,7 @@ import com.dallinjohnson.projectmanager.dto.TaskDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,9 +28,14 @@ public class TaskMapperImpl implements TaskMapper {
         taskDTO.setStartDate(task.getStartDate());
         taskDTO.setEndDate(task.getEndDate());
         taskDTO.setComplete(task.isComplete());
-        taskDTO.setAssignedUsers(task.getAssignedUsers().stream()
-                .map(userMapper::mapToDTO)
-                .collect(Collectors.toList()));
+
+        if (task.getAssignedUsers() != null) {
+            taskDTO.setAssignedUsers(task.getAssignedUsers().stream()
+                    .map(userMapper::mapToDTO)
+                    .collect(Collectors.toList()));
+        } else {
+            taskDTO.setAssignedUsers(Collections.emptyList());
+        }
 
         return taskDTO;
     }

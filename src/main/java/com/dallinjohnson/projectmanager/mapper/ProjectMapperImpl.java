@@ -5,6 +5,7 @@ import com.dallinjohnson.projectmanager.dto.ProjectDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,9 +28,14 @@ public class ProjectMapperImpl implements ProjectMapper {
         projectDTO.setStartDate(project.getStartDate());
         projectDTO.setEndDate(project.getEndDate());
         projectDTO.setComplete(project.isComplete());
-        projectDTO.setTasks(project.getTasks().stream()
-                .map(taskMapper::mapToDTO)
-                .collect(Collectors.toList()));
+
+        if (project.getTasks() != null) {
+            projectDTO.setTasks(project.getTasks().stream()
+                    .map(taskMapper::mapToDTO)
+                    .collect(Collectors.toList()));
+        } else {
+            projectDTO.setTasks(Collections.emptyList());
+        }
 
         return projectDTO;
     }
