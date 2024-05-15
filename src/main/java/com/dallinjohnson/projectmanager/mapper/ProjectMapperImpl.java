@@ -49,6 +49,7 @@ public class ProjectMapperImpl implements ProjectMapper {
         project.setName(projectDTO.getName());
         project.setStartDate(projectDTO.getStartDate());
         project.setEndDate(projectDTO.getEndDate());
+        project.setComplete(projectDTO.isComplete());
 
         return project;
     }

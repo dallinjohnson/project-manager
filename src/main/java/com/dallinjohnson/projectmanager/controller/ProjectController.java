@@ -3,7 +3,9 @@ package com.dallinjohnson.projectmanager.controller;
 import com.dallinjohnson.projectmanager.domain.Project;
 import com.dallinjohnson.projectmanager.domain.Task;
 import com.dallinjohnson.projectmanager.dto.ProjectDTO;
+import com.dallinjohnson.projectmanager.dto.TaskDTO;
 import com.dallinjohnson.projectmanager.mapper.ProjectMapper;
+import com.dallinjohnson.projectmanager.mapper.TaskMapper;
 import com.dallinjohnson.projectmanager.service.ProjectService;
 import com.dallinjohnson.projectmanager.service.TaskService;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/projects")
@@ -24,34 +27,43 @@ public class ProjectController {
     private final ProjectService projectService;
     private final TaskService taskService;
     private final ProjectMapper projectMapper;
+    private final TaskMapper taskMapper;
 
     @Autowired
-    public ProjectController(ProjectService projectService, TaskService taskService, ProjectMapper projectMapper) {
+    public ProjectController(ProjectService projectService, TaskService taskService, ProjectMapper projectMapper, TaskMapper taskMapper) {
         this.projectService = projectService;
         this.taskService = taskService;
         this.projectMapper = projectMapper;
+        this.taskMapper = taskMapper;
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Project>> getAllProjects() {
-        return ResponseEntity.ok(projectService.findAll());
+    public ResponseEntity<List<ProjectDTO>> getAllProjects() {
+        List<Project> projects = projectService.findAll();
+        List<ProjectDTO> projectDTOs = projects.stream().map(projectMapper::mapToDTO).toList();
+        return ResponseEntity.ok(projectDTOs);
     }
 
     @GetMapping("/completed/")
-    public ResponseEntity<List<Project>> getCompletedProjects() {
-        return ResponseEntity.ok(projectService.getProjectsByIsComplete(true));
+    public ResponseEntity<List<ProjectDTO>> getCompletedProjects() {
+        List<Project> projects = projectService.getProjectsByIsComplete(true);
+        List<ProjectDTO> projectDTOs = projects.stream().map(projectMapper::mapToDTO).toList();
+        return ResponseEntity.ok(projectDTOs);
     }
 
     @GetMapping("/in-progress/")
-    public ResponseEntity<List<Project>> getInProgressProjects() {
-        return ResponseEntity.ok(projectService.getProjectsByIsComplete(false));
+    public ResponseEntity<List<ProjectDTO>> getInProgressProjects() {
+        List<Project> projects = projectService.getProjectsByIsComplete(false);
+        List<ProjectDTO> projectDTOs = projects.stream().map(projectMapper::mapToDTO).toList();
+        return ResponseEntity.ok(projectDTOs);
     }
 
     @GetMapping("/{projectId}")
-    public ResponseEntity<Project> getProjectById(@PathVariable @Positive Long projectId) {
+    public ResponseEntity<ProjectDTO> getProjectById(@PathVariable @Positive Long projectId) {
         Project project = projectService.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + projectId));
-        return ResponseEntity.ok(project);
+        ProjectDTO projectDTO = projectMapper.mapToDTO(project);
+        return ResponseEntity.ok(projectDTO);
     }
 
     @GetMapping("/{projectId}/tasks/")
@@ -68,8 +80,11 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}")
-    public ResponseEntity<Project> updateProject(@PathVariable @Positive Long projectId, @Valid @RequestBody Project project) {
-        return ResponseEntity.ok(projectService.update(projectId, project));
+    public ResponseEntity<ProjectDTO> updateProject(@PathVariable @Positive Long projectId, @Valid @RequestBody ProjectDTO projectDTO) {
+        Project project = projectMapper.mapToEntity(projectDTO);
+        project = projectService.update(projectId, project);
+        projectDTO = projectMapper.mapToDTO(project);
+        return ResponseEntity.ok(projectDTO);
     }
 
     @DeleteMapping("/{projectId}")
@@ -79,23 +94,31 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}/tasks/{taskId}")
-    public ResponseEntity<Task> updateTask(@PathVariable @Positive Long taskId, @Valid @RequestBody Task task) {
+    public ResponseEntity<TaskDTO> updateTask(@PathVariable @Positive Long taskId, @Valid @RequestBody TaskDTO taskDTO) {
+        Task task = taskMapper.mapToEntity(taskDTO);
         Task updatedTask = taskService.update(taskId, task);
-        return ResponseEntity.ok(updatedTask);
+        TaskDTO updatedTaskDTO = taskMapper.mapToDTO(updatedTask);
+        return ResponseEntity.ok(updatedTaskDTO);
     }
 
     @PostMapping("/{projectId}/tasks/")
-    public ResponseEntity<Task> addTaskToProject(@PathVariable @Positive Long projectId, @Valid @RequestBody Task task) {
+    public ResponseEntity<TaskDTO> addTaskToProject(@PathVariable @Positive Long projectId, @Valid @RequestBody TaskDTO taskDTO) {
+        Task task = taskMapper.mapToEntity(taskDTO);
         Project project = projectService.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with ID: " + projectId));
+
         task.setProject(project);
         project.getTasks().add(task);
+
         Task savedTask = taskService.save(task);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedTask);
+        TaskDTO savedTaskDTO = taskMapper.mapToDTO(savedTask);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedTaskDTO);
     }
 
     @GetMapping("/by-user")
-    public ResponseEntity<List<Project>> getProjectsByAssignedUserId(@RequestParam @Positive Long userId) {
-        return ResponseEntity.ok(projectService.findProjectsByUserId(userId));
+    public ResponseEntity<List<ProjectDTO>> getProjectsByAssignedUserId(@RequestParam @Positive Long userId) {
+        List<Project> projects = projectService.findProjectsByUserId(userId);
+        List<ProjectDTO> projectDTOs = projects.stream().map(projectMapper::mapToDTO).toList();
+        return ResponseEntity.ok(projectDTOs);
     }
 }
