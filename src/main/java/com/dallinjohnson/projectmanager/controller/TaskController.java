@@ -2,6 +2,8 @@ package com.dallinjohnson.projectmanager.controller;
 
 import com.dallinjohnson.projectmanager.domain.Task;
 import com.dallinjohnson.projectmanager.domain.User;
+import com.dallinjohnson.projectmanager.dto.TaskDTO;
+import com.dallinjohnson.projectmanager.mapper.TaskMapper;
 import com.dallinjohnson.projectmanager.service.TaskService;
 import com.dallinjohnson.projectmanager.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,20 +20,24 @@ public class TaskController {
 
     private final TaskService taskService;
     private final UserService userService;
+    private final TaskMapper taskMapper;
 
     @Autowired
-    public TaskController(TaskService taskService, UserService userService) {
+    public TaskController(TaskService taskService, UserService userService, TaskMapper taskMapper) {
         this.taskService = taskService;
         this.userService = userService;
+        this.taskMapper = taskMapper;
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Task>> getTasksByAssignedUserId(@RequestParam @Positive Long userId) {
-        return ResponseEntity.ok(taskService.getTasksByAssignedUserId(userId));
+    public ResponseEntity<List<TaskDTO>> getTasksByAssignedUserId(@RequestParam @Positive Long userId) {
+        List<Task> tasks = taskService.getTasksByAssignedUserId(userId);
+        List<TaskDTO> taskDTOs = tasks.stream().map(taskMapper::mapToDTO).toList();
+        return ResponseEntity.ok(taskDTOs);
     }
 
     @PutMapping("/{taskId}/users/{userId}")
-    public ResponseEntity<Task> assignUserToTask(@PathVariable @Positive Long taskId, @PathVariable @Positive Long userId) {
+    public ResponseEntity<TaskDTO> assignUserToTask(@PathVariable @Positive Long taskId, @PathVariable @Positive Long userId) {
         User user = userService.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
         Task task = taskService.findById(taskId)
@@ -42,8 +48,9 @@ public class TaskController {
 
         userService.save(user);
         Task updatedTask = taskService.save(task);
+        TaskDTO updatedTaskDTO = taskMapper.mapToDTO(updatedTask);
 
-        return ResponseEntity.ok(updatedTask);
+        return ResponseEntity.ok(updatedTaskDTO);
     }
 
     @DeleteMapping("/{taskId}")
