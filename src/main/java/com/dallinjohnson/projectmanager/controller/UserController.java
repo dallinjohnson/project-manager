@@ -1,6 +1,8 @@
 package com.dallinjohnson.projectmanager.controller;
 
 import com.dallinjohnson.projectmanager.domain.User;
+import com.dallinjohnson.projectmanager.dto.UserDTO;
+import com.dallinjohnson.projectmanager.mapper.UserMapper;
 import com.dallinjohnson.projectmanager.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -17,10 +19,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @GetMapping("/")
@@ -29,21 +33,27 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable @Positive Long userId) {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable @Positive Long userId) {
         User user = userService.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-        return ResponseEntity.ok(user);
+        UserDTO userDTO = userMapper.mapToDTO(user);
+        return ResponseEntity.ok(userDTO);
     }
 
     @PostMapping("/")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(user));
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
+        User user = userMapper.mapToEntity(userDTO);
+        User savedUser = userService.save(user);
+        UserDTO savedUserDTO = userMapper.mapToDTO(savedUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUserDTO);
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable @Positive Long userId, @Valid @RequestBody User user) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable @Positive Long userId, @Valid @RequestBody UserDTO userDTO) {
+        User user = userMapper.mapToEntity(userDTO);
         user.setId(userId);
         User updatedUser = userService.update(userId, user);
-        return ResponseEntity.ok(updatedUser);
+        UserDTO updatedUserDTO = userMapper.mapToDTO(updatedUser);
+        return ResponseEntity.ok(updatedUserDTO);
     }
 }
