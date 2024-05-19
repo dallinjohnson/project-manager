@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -51,6 +52,19 @@ public class TaskController {
         TaskDTO updatedTaskDTO = taskMapper.mapToDTO(updatedTask);
 
         return ResponseEntity.ok(updatedTaskDTO);
+    }
+
+    @PutMapping("/{taskId}/users/remove/{userId}")
+    public ResponseEntity<TaskDTO> removeUserFromTask(@PathVariable @Positive Long taskId, @PathVariable @Positive Long userId) {
+        Task task = taskService.findById(taskId)
+                .orElseThrow(() -> new EntityNotFoundException("Task not found with id: " + taskId));
+        List<User> users = task.getAssignedUsers();
+        users.removeIf(user -> Objects.equals(user.getId(), userId));
+
+        Task savedTask = taskService.save(task);
+        TaskDTO savedTaskDTO = taskMapper.mapToDTO(savedTask);
+
+        return ResponseEntity.ok(savedTaskDTO);
     }
 
     @DeleteMapping("/{taskId}")
