@@ -56,4 +56,10 @@ public class UserController {
         UserDTO updatedUserDTO = userMapper.mapToDTO(updatedUser);
         return ResponseEntity.ok(updatedUserDTO);
     }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable @Positive Long userId) {
+        userService.deleteById(userId);
+        return ResponseEntity.noContent().build();
+    }
 }

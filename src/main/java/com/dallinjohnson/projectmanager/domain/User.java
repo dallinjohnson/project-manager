@@ -17,7 +17,7 @@ public class User {
     @NotBlank(message = "Name is required")
     private String name;
 
-    @ManyToMany(mappedBy = "assignedUsers")
+    @ManyToMany(mappedBy = "assignedUsers", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Task> assignedTasks;
 

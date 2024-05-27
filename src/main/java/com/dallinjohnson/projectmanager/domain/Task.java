@@ -26,7 +26,7 @@ public class Task {
 
     private boolean isComplete = false;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_tasks",
             joinColumns = @JoinColumn(name = "task_id"),
